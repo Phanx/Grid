@@ -1,3 +1,7 @@
+### Version
+
+- Fixed the class and role layouts not always showing all players ([ticket #855](https://wow.curseforge.com/addons/grid/tickets/855))
+
 ### Version 7.1.0.0
 
 - Added a workaround for a Blizzard bug causing errors in the Health status module ([ticket #859](https://wow.curseforge.com/addons/grid/tickets/859))
