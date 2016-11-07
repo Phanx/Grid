@@ -168,7 +168,7 @@ function GridStatusResurrect:UpdateUnit(unit, guid)
 			end
 			startTime = startTime / 1000
 			duration = endTime - startTime
-		elseif hasRes == "SELFRES" then and type(endTime) == "number" then
+		elseif hasRes == "SELFRES" and type(endTime) == "number" then
 			icon = "Interface\\ICONS\\Spell_Shadow_Soulgem"
 			startTime = endTime - 360
 			duration = 360
