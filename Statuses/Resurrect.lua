@@ -168,14 +168,16 @@ function GridStatusResurrect:UpdateUnit(unit, guid)
 			end
 			startTime = startTime / 1000
 			duration = endTime - startTime
-		elseif hasRes == "SELFRES" then
+		elseif hasRes == "SELFRES" then and type(endTime) == "number" then
 			icon = "Interface\\ICONS\\Spell_Shadow_Soulgem"
 			startTime = endTime - 360
 			duration = 360
 		else
-			icon = "Interface\\Icons\\Spell_Nature_Reincarnation"
-			startTime = endTime - 60
-			duration = 60
+                        if type(endTime) == "number" then
+			    icon = "Interface\\Icons\\Spell_Nature_Reincarnation"
+			    startTime = endTime - 60
+			    duration = 60
+                        end
 		end
 
 		self.core:SendStatusGained(guid, "alert_resurrect",
