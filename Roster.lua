@@ -274,7 +274,13 @@ do
 		elseif maxPlayers == 1 or not IsInGroup() then -- treat solo scenarios as solo, not party or raid
 			return "solo",  1
 		elseif IsInRaid() then
-			return "raid",  maxPlayers or 40
+			-- MG
+			-- In Broken Isles Zones, maxPlayers is set to 5.
+			-- If we are in a raid, and the maxPlayers is less than 10, we will just assume it should be 40.
+			if (maxPlayers or 0) < 10 then
+				maxPlayers = 40
+			end
+			return "raid",  maxPlayers
 		else
 			-- In the world, maxPlayers is 40 even when in just a party
 			-- when not in a raid, pvp, arena, or bg use 5
