@@ -52,6 +52,7 @@ local spell_names = {
 	--["Sacred Shield"] = GetSpellInfo(20925), -- removed in 7.0
 -- Priest
 	["Atonement"] = GetSpellInfo(214206), -- new in 7.0, +healing mod, alternate spellid 214206
+    ["Body and Mind"] = GetSpellInfo(214121),
 	["Clarity of Will"] = GetSpellInfo(152118), -- new in 7.0, shield
 	--["Grace"] = GetSpellInfo(77613), -- removed in 7.0, replaced by Atonement
 	["Power Word: Shield"] = GetSpellInfo(17),
@@ -332,6 +333,16 @@ GridStatusAuras.defaultDB = {
 		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
 		durationColorMiddle = { r = .56, g = .56, b =  0, a = 1 },
 		durationColorHigh = { r = .8, g = .8, b =  0, a = 1 },
+	},
+	[GridStatusAuras:StatusForSpell("Body and Mind", true)] = {
+		desc = format(L["Buff: %s"], spell_names["Body and Mind"]),
+		buff = spell_names["Body and Mind"],
+		text = GridStatusAuras:TextForSpell(spell_names["Body and Mind"]),
+		color = { r = .8, g = .8, b =  0, a = 1 },
+		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
+		durationColorMiddle = { r = .56, g = .56, b =  0, a = 1 },
+		durationColorHigh = { r = .8, g = .8, b =  0, a = 1 },
+		mine = true,
 	},
 	[GridStatusAuras:StatusForSpell("Power Word: Shield", true)] = {
 		desc = format(L["Buff: %s"], spell_names["Power Word: Shield"]),
