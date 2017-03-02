@@ -224,6 +224,16 @@ GridStatusAuras.defaultDB = {
 		durationColorHigh = { r =  0, g = .3, b = .7, a = 1 },
 		mine = true,
 	},
+	[GridStatusAuras:StatusForSpell("Wild Growth", true)] = {
+		desc = format(L["Buff: %s"], spell_names["Wild Growth"]),
+		buff = spell_names["Wild Growth"],
+		text = GridStatusAuras:TextForSpell(spell_names["Wild Growth"]),
+		color = { r =  0, g = .3, b = .7, a = 1 },
+		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
+		durationColorMiddle = { r =  0, g = .21, b = .49, a = 1 },
+		durationColorHigh = { r =  0, g = .3, b = .7, a = 1 },
+		mine = true,
+	},
 
 	-- Monk
 	[GridStatusAuras:StatusForSpell("Enveloping Mist", true)] = {
