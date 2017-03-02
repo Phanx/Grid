@@ -47,6 +47,7 @@ local spell_names = {
 	["Beacon of Faith"] = GetSpellInfo(156910),
 	["Beacon of Light"] = GetSpellInfo(53563),
     ["Beacon of Virtue"] = GetSpellInfo(200025),
+    ["Bestow Faith"] = GetSpellInfo(223306),
 	--["Eternal Flame"] = GetSpellInfo(114163), -- removed in 7.0
 	["Forbearance"] = GetSpellInfo(25771),
 	--["Sacred Shield"] = GetSpellInfo(20925), -- removed in 7.0
@@ -300,6 +301,18 @@ GridStatusAuras.defaultDB = {
 		desc = format(L["Buff: %s"], spell_names["Beacon of Virtue"]),
 		buff = spell_names["Beacon of Virtue"],
 		text = GridStatusAuras:TextForSpell(spell_names["Beacon of Virtue"]),
+		color = { r = .5, g = 0.7, b = 0.3, a = 1 },
+		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
+		durationColorMiddle = { r = .49, g = .49, b = 0, a = 1 },
+		durationColorHigh = { r = .7, g = .7, b = 0, a = 1 },
+		durationLow = 5,
+		durationHigh = 10,
+		mine = true,
+	},
+	[GridStatusAuras:StatusForSpell("Bestow Faith", true)] = {
+		desc = format(L["Buff: %s"], spell_names["Bestow Faith"]),
+		buff = spell_names["Bestow Faith"],
+		text = GridStatusAuras:TextForSpell(spell_names["Bestow Faith"]),
 		color = { r = .5, g = 0.7, b = 0.3, a = 1 },
 		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
 		durationColorMiddle = { r = .49, g = .49, b = 0, a = 1 },
