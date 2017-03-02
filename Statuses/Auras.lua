@@ -54,6 +54,7 @@ local spell_names = {
 	["Atonement"] = GetSpellInfo(214206), -- new in 7.0, +healing mod, alternate spellid 214206
     ["Body and Mind"] = GetSpellInfo(214121),
 	["Clarity of Will"] = GetSpellInfo(152118), -- new in 7.0, shield
+	["Echo of Light"] = GetSpellInfo(77489),
 	--["Grace"] = GetSpellInfo(77613), -- removed in 7.0, replaced by Atonement
 	["Power Word: Shield"] = GetSpellInfo(17),
 	["Prayer of Mending"] = GetSpellInfo(33076),
@@ -338,6 +339,16 @@ GridStatusAuras.defaultDB = {
 		desc = format(L["Buff: %s"], spell_names["Body and Mind"]),
 		buff = spell_names["Body and Mind"],
 		text = GridStatusAuras:TextForSpell(spell_names["Body and Mind"]),
+		color = { r = .8, g = .8, b =  0, a = 1 },
+		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
+		durationColorMiddle = { r = .56, g = .56, b =  0, a = 1 },
+		durationColorHigh = { r = .8, g = .8, b =  0, a = 1 },
+		mine = true,
+	},
+	[GridStatusAuras:StatusForSpell("Echo of Light", true)] = {
+		desc = format(L["Buff: %s"], spell_names["Echo of Light"]),
+		buff = spell_names["Echo of Light"],
+		text = GridStatusAuras:TextForSpell(spell_names["Echo of Light"]),
 		color = { r = .8, g = .8, b =  0, a = 1 },
 		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
 		durationColorMiddle = { r = .56, g = .56, b =  0, a = 1 },
