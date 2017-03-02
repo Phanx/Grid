@@ -51,6 +51,7 @@ local spell_names = {
 	--["Eternal Flame"] = GetSpellInfo(114163), -- removed in 7.0
 	["Forbearance"] = GetSpellInfo(25771),
 	--["Sacred Shield"] = GetSpellInfo(20925), -- removed in 7.0
+	["Tyr's Deliverance"] = GetSpellInfo(200654),
 -- Priest
 	["Atonement"] = GetSpellInfo(214206), -- new in 7.0, +healing mod, alternate spellid 214206
     ["Body and Mind"] = GetSpellInfo(214121),
@@ -329,6 +330,18 @@ GridStatusAuras.defaultDB = {
 		durationColorLow = { r = .15, g = .15, b = .15, a = 1 },
 		durationColorMiddle = { r = .35, g = .35, b = .35, a = 1 },
 		durationColorHigh = { r = .5, g = .5, b = .5, a = 1 },
+	},
+	[GridStatusAuras:StatusForSpell("Tyr's Deliverance")] = {
+		desc = format(L["Buff: %s"], spell_names["Tyr's Deliverance"]),
+		buff = spell_names["Tyr's Deliverance"],
+		text = GridStatusAuras:TextForSpell(spell_names["Tyr's Deliverance"]),
+		color = { r = .5, g = .5, b = .5, a = 1 },
+		durationColorLow = { r = .15, g = .15, b = .15, a = 1 },
+		durationColorMiddle = { r = .35, g = .35, b = .35, a = 1 },
+		durationColorHigh = { r = .5, g = .5, b = .5, a = 1 },
+		durationLow = 5,
+		durationHigh = 10,
+		mine = true,
 	},
 
 	-- Priest
