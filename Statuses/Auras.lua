@@ -37,6 +37,7 @@ local spell_names = {
 	["Lifebloom"] = GetSpellInfo(33763),
 	["Regrowth"] = GetSpellInfo(8936),
 	["Rejuvenation"] = GetSpellInfo(774),
+    ["Rejuvenation (Germination)"] = GetSpellInfo(155777),
 	["Wild Growth"] = GetSpellInfo(48438),
 -- Monk
 	["Enveloping Mist"] = GetSpellInfo(124682),
@@ -45,12 +46,18 @@ local spell_names = {
 -- Paladin
 	["Beacon of Faith"] = GetSpellInfo(156910),
 	["Beacon of Light"] = GetSpellInfo(53563),
+    ["Beacon of Virtue"] = GetSpellInfo(200025),
+    ["Bestow Faith"] = GetSpellInfo(223306),
 	--["Eternal Flame"] = GetSpellInfo(114163), -- removed in 7.0
 	["Forbearance"] = GetSpellInfo(25771),
 	--["Sacred Shield"] = GetSpellInfo(20925), -- removed in 7.0
+    ["Sacred Dawn"] = GetSpellInfo(238132),
+	["Tyr's Deliverance"] = GetSpellInfo(200654),
 -- Priest
 	["Atonement"] = GetSpellInfo(214206), -- new in 7.0, +healing mod, alternate spellid 214206
+    ["Body and Mind"] = GetSpellInfo(214121),
 	["Clarity of Will"] = GetSpellInfo(152118), -- new in 7.0, shield
+	["Echo of Light"] = GetSpellInfo(77489),
 	--["Grace"] = GetSpellInfo(77613), -- removed in 7.0, replaced by Atonement
 	["Power Word: Shield"] = GetSpellInfo(17),
 	["Prayer of Mending"] = GetSpellInfo(33076),
@@ -224,6 +231,26 @@ GridStatusAuras.defaultDB = {
 		durationColorHigh = { r =  0, g = .3, b = .7, a = 1 },
 		mine = true,
 	},
+	[GridStatusAuras:StatusForSpell("Rejuvenation (Germination)", true)] = {
+		desc = format(L["Buff: %s"], spell_names["Rejuvenation (Germination)"]),
+		buff = spell_names["Rejuvenation (Germination)"],
+		text = GridStatusAuras:TextForSpell(spell_names["Rejuvenation (Germination)"]),
+		color = { r =  0, g = .3, b = .7, a = 1 },
+		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
+		durationColorMiddle = { r =  0, g = .21, b = .49, a = 1 },
+		durationColorHigh = { r =  0, g = .3, b = .7, a = 1 },
+		mine = true,
+	},
+	[GridStatusAuras:StatusForSpell("Wild Growth", true)] = {
+		desc = format(L["Buff: %s"], spell_names["Wild Growth"]),
+		buff = spell_names["Wild Growth"],
+		text = GridStatusAuras:TextForSpell(spell_names["Wild Growth"]),
+		color = { r =  0, g = .3, b = .7, a = 1 },
+		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
+		durationColorMiddle = { r =  0, g = .21, b = .49, a = 1 },
+		durationColorHigh = { r =  0, g = .3, b = .7, a = 1 },
+		mine = true,
+	},
 
 	-- Monk
 	[GridStatusAuras:StatusForSpell("Enveloping Mist", true)] = {
@@ -272,6 +299,30 @@ GridStatusAuras.defaultDB = {
 		durationHigh = 10,
 		mine = true,
 	},
+	[GridStatusAuras:StatusForSpell("Beacon of Virtue", true)] = {
+		desc = format(L["Buff: %s"], spell_names["Beacon of Virtue"]),
+		buff = spell_names["Beacon of Virtue"],
+		text = GridStatusAuras:TextForSpell(spell_names["Beacon of Virtue"]),
+		color = { r = .5, g = 0.7, b = 0.3, a = 1 },
+		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
+		durationColorMiddle = { r = .49, g = .49, b = 0, a = 1 },
+		durationColorHigh = { r = .7, g = .7, b = 0, a = 1 },
+		durationLow = 5,
+		durationHigh = 10,
+		mine = true,
+	},
+	[GridStatusAuras:StatusForSpell("Bestow Faith", true)] = {
+		desc = format(L["Buff: %s"], spell_names["Bestow Faith"]),
+		buff = spell_names["Bestow Faith"],
+		text = GridStatusAuras:TextForSpell(spell_names["Bestow Faith"]),
+		color = { r = .5, g = 0.7, b = 0.3, a = 1 },
+		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
+		durationColorMiddle = { r = .49, g = .49, b = 0, a = 1 },
+		durationColorHigh = { r = .7, g = .7, b = 0, a = 1 },
+		durationLow = 5,
+		durationHigh = 10,
+		mine = true,
+	},
 	[GridStatusAuras:StatusForSpell("Forbearance")] = {
 		desc = format(L["Debuff: %s"], spell_names["Forbearance"]),
 		debuff = spell_names["Forbearance"],
@@ -280,6 +331,30 @@ GridStatusAuras.defaultDB = {
 		durationColorLow = { r = .15, g = .15, b = .15, a = 1 },
 		durationColorMiddle = { r = .35, g = .35, b = .35, a = 1 },
 		durationColorHigh = { r = .5, g = .5, b = .5, a = 1 },
+	},
+	[GridStatusAuras:StatusForSpell("Sacred Dawn")] = {
+		desc = format(L["Buff: %s"], spell_names["Sacred Dawn"]),
+		buff = spell_names["Sacred Dawn"],
+		text = GridStatusAuras:TextForSpell(spell_names["Sacred Dawn"]),
+		color = { r = .5, g = .5, b = .5, a = 1 },
+		durationColorLow = { r = .15, g = .15, b = .15, a = 1 },
+		durationColorMiddle = { r = .35, g = .35, b = .35, a = 1 },
+		durationColorHigh = { r = .5, g = .5, b = .5, a = 1 },
+		durationLow = 5,
+		durationHigh = 10,
+		mine = true,
+	},
+	[GridStatusAuras:StatusForSpell("Tyr's Deliverance")] = {
+		desc = format(L["Buff: %s"], spell_names["Tyr's Deliverance"]),
+		buff = spell_names["Tyr's Deliverance"],
+		text = GridStatusAuras:TextForSpell(spell_names["Tyr's Deliverance"]),
+		color = { r = .5, g = .5, b = .5, a = 1 },
+		durationColorLow = { r = .15, g = .15, b = .15, a = 1 },
+		durationColorMiddle = { r = .35, g = .35, b = .35, a = 1 },
+		durationColorHigh = { r = .5, g = .5, b = .5, a = 1 },
+		durationLow = 5,
+		durationHigh = 10,
+		mine = true,
 	},
 
 	-- Priest
@@ -298,6 +373,26 @@ GridStatusAuras.defaultDB = {
 		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
 		durationColorMiddle = { r = .56, g = .56, b =  0, a = 1 },
 		durationColorHigh = { r = .8, g = .8, b =  0, a = 1 },
+	},
+	[GridStatusAuras:StatusForSpell("Body and Mind", true)] = {
+		desc = format(L["Buff: %s"], spell_names["Body and Mind"]),
+		buff = spell_names["Body and Mind"],
+		text = GridStatusAuras:TextForSpell(spell_names["Body and Mind"]),
+		color = { r = .8, g = .8, b =  0, a = 1 },
+		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
+		durationColorMiddle = { r = .56, g = .56, b =  0, a = 1 },
+		durationColorHigh = { r = .8, g = .8, b =  0, a = 1 },
+		mine = true,
+	},
+	[GridStatusAuras:StatusForSpell("Echo of Light", true)] = {
+		desc = format(L["Buff: %s"], spell_names["Echo of Light"]),
+		buff = spell_names["Echo of Light"],
+		text = GridStatusAuras:TextForSpell(spell_names["Echo of Light"]),
+		color = { r = .8, g = .8, b =  0, a = 1 },
+		durationColorLow = { r = 1, g = 0, b = 0, a = 1 },
+		durationColorMiddle = { r = .56, g = .56, b =  0, a = 1 },
+		durationColorHigh = { r = .8, g = .8, b =  0, a = 1 },
+		mine = true,
 	},
 	[GridStatusAuras:StatusForSpell("Power Word: Shield", true)] = {
 		desc = format(L["Buff: %s"], spell_names["Power Word: Shield"]),
