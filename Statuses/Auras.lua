@@ -1659,7 +1659,8 @@ function GridStatusAuras:ScanUnitAuras(event, unit, guid)
 	if UnitIsVisible(unit) then
 		-- scan for buffs
 		for buff_name in pairs(buff_names) do
-			local name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable = UnitAura(unit, buff_name, nil, "HELPFUL")
+			local rank
+			local name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplaceShowPersonal, spellId, canApplyAura, isBossDebuff, isCastByPlayer, nameplaceShowAll, timeMod = AuraUtil.FindAuraByName(buff_name, unit, "HELPFUL")
 			if name then
 				buff_names_seen[name] = true
 				self:UnitGainedBuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
@@ -1668,7 +1669,8 @@ function GridStatusAuras:ScanUnitAuras(event, unit, guid)
 
 		-- scan for buffs cast by the player
 		for buff_name in pairs(player_buff_names) do
-			local name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable = UnitAura(unit, buff_name, nil, "HELPFUL|PLAYER")
+			local rank
+			local name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplaceShowPersonal, spellId, canApplyAura, isBossDebuff, isCastByPlayer, nameplaceShowAll, timeMod = AuraUtil.FindAuraByName(buff_name, unit, "HELPFUL|PLAYER")
 			if name then
 				player_buff_names_seen[name] = true
 				self:UnitGainedPlayerBuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
