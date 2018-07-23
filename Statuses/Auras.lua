@@ -12,8 +12,6 @@
 	Grid status module for tracking buffs/debuffs.
 ----------------------------------------------------------------------]]
 
-local IS_WOW_8 = GetBuildInfo():match("^8")
-
 local _, Grid = ...
 local L = Grid.L
 
@@ -51,12 +49,10 @@ local spell_names = {
 	["Beacon of Virtue"] = GetSpellInfo(200025),
 	["Forbearance"] = GetSpellInfo(25771),
 	["Sacred Dawn"] = GetSpellInfo(243174),
-	["Tyr's Deliverance"] = GetSpellInfo(200654),
 -- Priest
 	["Atonement"] = GetSpellInfo(214206),
 	["Clarity of Will"] = GetSpellInfo(152118),
 	["Guardian Spirit"] = GetSpellInfo(47788),
-	["Light of T'uure"] = GetSpellInfo(208065),
 	["Power Word: Shield"] = GetSpellInfo(17),
 	["Prayer of Mending"] = GetSpellInfo(33076),
 	["Renew"] = GetSpellInfo(139),
@@ -334,16 +330,6 @@ GridStatusAuras.defaultDB = {
 		durationColorMiddle = { r = 0.66, g = 0.7, b = 0.49, a = 1 },
 		durationColorHigh = { r = 0.43, g = 0.45, b = 0.32, a = 1 },
 	},
-	[GridStatusAuras:StatusForSpell("Tyr's Deliverance")] = {
-		-- 200654
-		desc = format(L["Debuff: %s"], spell_names["Tyr's Deliverance"]),
-		debuff = spell_names["Tyr's Deliverance"],
-		text = GridStatusAuras:TextForSpell(spell_names["Tyr's Deliverance"]),
-		color = { r = 0.95, g = 0.82, b = 0.33, a = 1 },
-		durationColorLow = { r = 0.95, g = 0.82, b = 0.33, a = 1 },
-		durationColorMiddle = { r = 0.65, g = 0.56, b = 0.23, a = 1 },
-		durationColorHigh = { r = 0.45, g = 0.38, b = 0.16, a = 1 },
-	},
 	[GridStatusAuras:StatusForSpell("Forbearance")] = {
 		-- 25771
 		desc = format(L["Debuff: %s"], spell_names["Forbearance"]),
@@ -385,17 +371,6 @@ GridStatusAuras.defaultDB = {
 		durationColorLow = { r = 0.4, g = 0.73, b = 1, a = 1 },
 		durationColorMiddle = { r = 0.24, g = 0.54, b = 0.8, a = 1 },
 		durationColorHigh = { r = 0.13, g = 0.41, b = 0.65, a = 1 },
-		mine = true,
-	},
-	[GridStatusAuras:StatusForSpell("Light of T'uure", true)] = {
-		-- 208065
-		desc = format(L["Buff: %s"], spell_names["Light of T'uure"]),
-		buff = spell_names["Light of T'uure"],
-		text = GridStatusAuras:TextForSpell(spell_names["Light of T'uure"]),
-		color = { r = 0.33, g = 0.46, b = 1, a = 1 },
-		durationColorLow = { r = 0.33, g = 0.46, b = 1, a = 1 },
-		durationColorMiddle = { r = 0.24, g = 0.33, b = 0.7, a = 1 },
-		durationColorHigh = { r = 0.17, g = 0.23, b = 0.5, a = 1 },
 		mine = true,
 	},
 	[GridStatusAuras:StatusForSpell("Power Word: Shield", true)] = {
@@ -1188,7 +1163,7 @@ local durationAuraPool = Pool:new(
 	}
 )
 
-function GridStatusAuras:UnitGainedDurationStatus(status, guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
+function GridStatusAuras:UnitGainedDurationStatus(status, guid, class, name, icon, count, debuffType, duration, expirationTime, caster, isStealable)
 	local timer = self.durationTimer
 	local settings = self.db.profile[status]
 	if not settings then return end
@@ -1202,7 +1177,6 @@ function GridStatusAuras:UnitGainedDurationStatus(status, guid, class, name, ran
 		end
 		self.durationAuras[status][guid] = {
 			class = class,
-			rank = rank,
 			icon = icon,
 			count = count,
 			debuffType = debuffType,
@@ -1349,7 +1323,7 @@ function GridStatusAuras:RefreshActiveDurations()
 	end
 end
 
-function GridStatusAuras:UnitGainedBuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
+function GridStatusAuras:UnitGainedBuff(guid, class, name, icon, count, debuffType, duration, expirationTime, caster, isStealable)
 	self:Debug("UnitGainedBuff", guid, class, name)
 
 	local status = buff_names[name]
@@ -1363,7 +1337,7 @@ function GridStatusAuras:UnitGainedBuff(guid, class, name, rank, icon, count, de
 		local timeLeft = expirationTime and expirationTime > now and (expirationTime - now) or 0
 		local text, color = self:StatusTextColor(settings, count, timeLeft)
 		if duration and expirationTime and duration > 0 and expirationTime > 0 then
-			self:UnitGainedDurationStatus(status, guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
+			self:UnitGainedDurationStatus(status, guid, class, name, icon, count, debuffType, duration, expirationTime, caster, isStealable)
 		end
 		self.core:SendStatusGained(guid,
 			status,
@@ -1411,7 +1385,7 @@ function GridStatusAuras:UnitLostBuff(guid, class, name)
 	end
 end
 
-function GridStatusAuras:UnitGainedPlayerBuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
+function GridStatusAuras:UnitGainedPlayerBuff(guid, class, name, icon, count, debuffType, duration, expirationTime, caster, isStealable)
 	self:Debug("UnitGainedPlayerBuff", guid, name)
 
 	local status = player_buff_names[name]
@@ -1425,7 +1399,7 @@ function GridStatusAuras:UnitGainedPlayerBuff(guid, class, name, rank, icon, cou
 		local timeLeft = expirationTime and expirationTime > now and (expirationTime - now) or 0
 		local text, color = self:StatusTextColor(settings, count, timeLeft)
 		if duration and expirationTime and duration > 0 and expirationTime > 0 then
-			self:UnitGainedDurationStatus(status, guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
+			self:UnitGainedDurationStatus(status, guid, class, name, icon, count, debuffType, duration, expirationTime, caster, isStealable)
 		end
 		self.core:SendStatusGained(guid,
 			status,
@@ -1473,7 +1447,7 @@ function GridStatusAuras:UnitLostPlayerBuff(guid, class, name)
 	end
 end
 
-function GridStatusAuras:UnitGainedDebuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
+function GridStatusAuras:UnitGainedDebuff(guid, class, name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
 	self:Debug("UnitGainedDebuff", guid, class, name)
 
 	local status = debuff_names[name]
@@ -1485,7 +1459,7 @@ function GridStatusAuras:UnitGainedDebuff(guid, class, name, rank, icon, count, 
 		local timeLeft = expirationTime and expirationTime > now and (expirationTime - now) or 0
 		local text, color = self:StatusTextColor(settings, count, timeLeft)
 		if duration and expirationTime and duration > 0 and expirationTime > 0 then
-			self:UnitGainedDurationStatus(status, guid, class, name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
+			self:UnitGainedDurationStatus(status, guid, class, name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
 		end
 		self.core:SendStatusGained(guid,
 			status,
@@ -1515,7 +1489,7 @@ function GridStatusAuras:UnitLostDebuff(guid, class, name)
 	self.core:SendStatusLost(guid, status)
 end
 
-function GridStatusAuras:UnitGainedDebuffType(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
+function GridStatusAuras:UnitGainedDebuffType(guid, class, name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
 	self:Debug("UnitGainedDebuffType", guid, class, debuffType)
 
 	local status = debuffType and debuff_types[debuffType]
@@ -1527,7 +1501,7 @@ function GridStatusAuras:UnitGainedDebuffType(guid, class, name, rank, icon, cou
 		local timeLeft = expirationTime and expirationTime > now and (expirationTime - now) or 0
 		local text, color = self:StatusTextColor(settings, count, timeLeft)
 		if duration and expirationTime and duration > 0 and expirationTime > 0 then
-			self:UnitGainedDurationStatus(status, guid, class, name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
+			self:UnitGainedDurationStatus(status, guid, class, name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
 		end
 		self.core:SendStatusGained(guid,
 			status,
@@ -1558,7 +1532,7 @@ function GridStatusAuras:UnitLostDebuffType(guid, class, debuffType)
 	self.core:SendStatusLost(guid, status)
 end
 
-function GridStatusAuras:UnitGainedBossDebuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
+function GridStatusAuras:UnitGainedBossDebuff(guid, class, name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
 	local status = "boss_aura"
 	local settings = self.db.profile[status]
 	if settings.enable then
@@ -1566,7 +1540,7 @@ function GridStatusAuras:UnitGainedBossDebuff(guid, class, name, rank, icon, cou
 		local timeLeft = expirationTime and expirationTime > now and (expirationTime - now) or 0
 		local text, color = self:StatusTextColor(settings, count, timeLeft)
 		if duration and expirationTime and duration > 0 and expirationTime > 0 then
-			self:UnitGainedDurationStatus(status, guid, class, name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
+			self:UnitGainedDurationStatus(status, guid, class, name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
 		end
 		self.core:SendStatusGained(guid,
 			status,
@@ -1664,14 +1638,10 @@ function GridStatusAuras:ScanUnitAuras(event, unit, guid)
 	end
 
 	if UnitIsVisible(unit) then
-		for i = 1, 40 do
-			local name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable
-			if IS_WOW_8 then
-				name, icon, count, debuffType, duration, expirationTime, caster, isStealable = UnitAura(unit, i, "HELPFUL")
-			else
-				name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable = UnitAura(unit, i, "HELPFUL")
-			end
-
+		local i = 0
+		while true do
+			i = i + 1
+			local name, icon, count, debuffType, duration, expirationTime, caster, isStealable = UnitAura(unit, i, "HELPFUL")
 			if not name then
 				break
 			end
@@ -1679,24 +1649,19 @@ function GridStatusAuras:ScanUnitAuras(event, unit, guid)
 			-- scan for buffs
 			if buff_names[name] then
 				buff_names_seen[name] = true
-				self:UnitGainedBuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
+				self:UnitGainedBuff(guid, class, name, icon, count, debuffType, duration, expirationTime, caster, isStealable)
 			end
 
 			-- scan for buffs cast by the player
 			if player_buff_names[name] then
 				player_buff_names_seen[name] = true
-				self:UnitGainedPlayerBuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
+				self:UnitGainedPlayerBuff(guid, class, name, icon, count, debuffType, duration, expirationTime, caster, isStealable)
 			end
 		end
 
 		-- scan for debuffs
 		for index = 1, 40 do
-			local name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer
-			if IS_WOW_8 then
-				name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer = UnitAura(unit, index, "HARMFUL")
-			else
-				name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer = UnitAura(unit, index, "HARMFUL")
-			end
+			local name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer = UnitAura(unit, index, "HARMFUL")
 
 			if not name then
 				break
@@ -1704,16 +1669,16 @@ function GridStatusAuras:ScanUnitAuras(event, unit, guid)
 
 			if debuff_names[name] then
 				debuff_names_seen[name] = true
-				self:UnitGainedDebuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
+				self:UnitGainedDebuff(guid, class, name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
 			--[[
 			elseif isBossAura then
 				seenBossAura = true
-				self:UnitGainedBossDebuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
+				self:UnitGainedBossDebuff(guid, class, name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
 			]]
 			elseif debuff_types[debuffType] then
 				-- elseif so that a named debuff doesn't trigger the type status
 				debuff_types_seen[debuffType] = true
-				self:UnitGainedDebuffType(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
+				self:UnitGainedDebuffType(guid, class, name, icon, count, debuffType, duration, expirationTime, casterUnit, canStealOrPurge, shouldConsolidate, spellID, canApply, isBossAura, isCastByPlayer)
 			end
 		end
 	end

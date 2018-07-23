@@ -91,7 +91,7 @@ function GridStatusAbsorbs:UpdateUnit(event, unit)
 	if not GridRoster:IsGUIDInRaid(guid) then return end
 
 	local amount = UnitIsVisible(unit) and UnitGetTotalAbsorbs(unit) or 0
-	if amount > 0 then
+	if settings.text and amount > 0 then
 		local maxHealth = UnitHealthMax(unit)
 		if (amount / maxHealth) > settings.minimumValue then
 			local text = amount

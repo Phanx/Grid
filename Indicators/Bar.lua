@@ -16,6 +16,9 @@ local L = Grid.L
 
 local function SetBarColor(bar, r, g, b, invert)
 	--print("SetBarColor", invert)
+	if not r then
+		return
+	end
 	if invert then
 		bar:SetStatusBarColor(r, g, b, 1)
 		bar.bg:SetVertexColor(r * 0.2, g * 0.2, b * 0.2, 1)
