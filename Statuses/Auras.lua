@@ -741,7 +741,7 @@ function GridStatusAuras:OptionsForStatus(status, isBuff)
 					width = "double",
 					type = "select",
 					values = {
-						["name"] = L["Buff name"],
+						["name"] = L["Debuff name"],
 						["duration"] = L["Time left"],
 						["count"] = L["Stack count"],
 					},
