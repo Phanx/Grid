@@ -1168,12 +1168,17 @@ end
 --   is preserved for historical interest.
 
 -- durationAuras[status][guid] = { <aura properties> }
-GridStatusAuras.durationAuras = {}
-GridStatusAuras.durationTimer = {
-	timer = nil,
-	refresh = nil,
-	minRefresh = nil,
+local durationAuras = {}
+
+local timer = {
+	handle = nil, -- timer handle from :StartTimer()
+	refresh = nil, -- refresh rate for active timer
+	minRefresh = nil, -- minimum refresh setting for active auras
 }
+
+-- For debugging of duration auras.
+GridStatusAuras.durationAuras = durationAuras
+GridStatusAuras.timer = timer
 
 local GetTime = GetTime
 local now = GetTime()
@@ -1201,18 +1206,17 @@ do
 end
 
 function GridStatusAuras:UnitGainedDurationStatus(status, guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
-	local timer = self.durationTimer
 	local settings = self.db.profile[status]
 	if not settings then return end
 
 	if settings.enable and (settings.statusText == "duration" or settings.statusColor == "duration") then
-		if not self.durationAuras[status] then
-			self.durationAuras[status] = newTable()
+		if not durationAuras[status] then
+			durationAuras[status] = newTable()
 		end
-		if not self.durationAuras[status][guid] then
-			self.durationAuras[status][guid] = newTable()
+		if not durationAuras[status][guid] then
+			durationAuras[status][guid] = newTable()
 		end
-		self.durationAuras[status][guid] = {
+		durationAuras[status][guid] = {
 			class = class,
 			rank = rank,
 			icon = icon,
@@ -1232,7 +1236,7 @@ function GridStatusAuras:UnitGainedDurationStatus(status, guid, class, name, ran
 end
 
 function GridStatusAuras:UnitLostDurationStatus(status, guid, class, name)
-	local auras = self.durationAuras[status]
+	local auras = durationAuras[status]
 	if auras and auras[guid] then
 		remTable(auras[guid])
 		auras[guid] = nil
@@ -1240,24 +1244,24 @@ function GridStatusAuras:UnitLostDurationStatus(status, guid, class, name)
 end
 
 function GridStatusAuras:DeleteDurationStatus(status)
-	local auras = self.durationAuras[status]
+	local auras = durationAuras[status]
 	if not auras then return end
 	for guid in pairs(auras) do
 		remTable(auras[guid])
 		auras[guid] = nil
 	end
 	remTable(auras)
-	self.durationAuras[status] = nil
+	durationAuras[status] = nil
 end
 
 function GridStatusAuras:ResetDurationStatuses()
-	for status in pairs(self.durationAuras) do
+	for status in pairs(durationAuras) do
 		self:DeleteDurationStatus(status)
 	end
 end
 
 function GridStatusAuras:HasActiveDurations()
-	for _, auras in pairs(self.durationAuras) do
+	for _, auras in pairs(durationAuras) do
 		if next(auras) then
 			return true
 		end
@@ -1266,23 +1270,22 @@ function GridStatusAuras:HasActiveDurations()
 end
 
 function GridStatusAuras:ResetDurationTimer(hasActiveDurations)
-	local timer = self.durationTimer
 	if hasActiveDurations then
-		if timer.timer and timer.refresh and timer.minRefresh ~= timer.refresh then
+		if timer.handle and timer.refresh and timer.minRefresh ~= timer.refresh then
 			self:Debug("ResetDurationTimer: cancel timer", timer.minRefresh, timer.refresh)
-			self:CancelTimer(timer.timer, true)
+			self:CancelTimer(timer.handle, true)
 		end
 		timer.refresh = timer.minRefresh
-		if not timer.timer then
+		if not timer.handle then
 			self:Debug("ResetDurationTimer: set timer", timer.refresh)
-			timer.timer = self:ScheduleRepeatingTimer("RefreshActiveDurations", timer.refresh)
+			timer.handle = self:ScheduleRepeatingTimer("RefreshActiveDurations", timer.refresh)
 		end
 	else
-		if timer.timer then
+		if timer.handle then
 			self:Debug("ResetDurationTimer: cancel timer")
-			self:CancelTimer(timer.timer, true)
+			self:CancelTimer(timer.handle, true)
 		end
-		timer.timer = nil
+		timer.handle = nil
 		timer.refresh = nil
 	end
 end
@@ -1333,7 +1336,7 @@ function GridStatusAuras:RefreshActiveDurations()
 
 	--self:Debug("RefreshActiveDurations", now)
 
-	for status, guids in pairs(self.durationAuras) do
+	for status, guids in pairs(durationAuras) do
 		local settings = self.db.profile[status]
 		if settings and settings.enable and not settings.missing then -- and settings[class] ~= false then -- ##DELETE
 			for guid, aura in pairs(guids) do
@@ -1672,7 +1675,7 @@ function GridStatusAuras:ScanUnitAuras(event, unit, guid)
 
 	now = GetTime()
 
-	for status, auras in pairs(self.durationAuras) do
+	for status, auras in pairs(durationAuras) do
 		if auras[guid] then
 			remTable(auras[guid])
 			auras[guid] = nil
