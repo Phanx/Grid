@@ -1257,7 +1257,7 @@ function GridStatusAuras:ResetDurationStatuses()
 end
 
 function GridStatusAuras:HasActiveDurations()
-	for status, auras in pairs(self.durationAuras) do
+	for _, auras in pairs(self.durationAuras) do
 		if next(auras) then
 			return true
 		end
@@ -1331,7 +1331,7 @@ end
 function GridStatusAuras:RefreshActiveDurations()
 	now = GetTime()
 
-	self:Debug("RefreshActiveDurations", now)
+	--self:Debug("RefreshActiveDurations", now)
 
 	for status, guids in pairs(self.durationAuras) do
 		local settings = self.db.profile[status]
@@ -1340,23 +1340,27 @@ function GridStatusAuras:RefreshActiveDurations()
 				local count, duration, expirationTime, icon = aura.count, aura.duration, aura.expirationTime, aura.icon
 				local start = expirationTime and (expirationTime - duration)
 				local timeLeft = expirationTime and expirationTime > now and (expirationTime - now) or 0
-				local text, color = self:StatusTextColor(settings, count, timeLeft)
-				self.core:SendStatusGained(guid,
-					status,
-					settings.priority,
-					nil,
-					color,
-					text,
-					count,
-					nil,
-					icon,
-					start,
-					duration,
-					count,
-					ICON_TEX_COORDS)
+				if timeLeft > 0 then
+					local text, color = self:StatusTextColor(settings, count, timeLeft)
+					self.core:SendStatusGained(guid,
+						status,
+						settings.priority,
+						nil,
+						color,
+						text,
+						count,
+						nil,
+						icon,
+						start,
+						duration,
+						count,
+						ICON_TEX_COORDS)
+				-- else
+				--	-- Aura expired, but this is caught by the UNIT_AURA handler, so no need to
+				--	-- handle this here.
+				--	self.core:SendStatusLost(guid, status)
+				end
 			end
-	--	else
-	--		self.core:SendStatusLost(guid, status) -- XXX "guid" is undefined=nil here; what is the purpose?!
 		end
 	end
 end
