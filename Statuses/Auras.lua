@@ -1227,7 +1227,7 @@ function GridStatusAuras:UnitGainedDurationStatus(status, guid, class, name, ran
 			caster = caster,
 			isStealable = isStealable,
 		}
-		if not timer.minRefresh or settings.refresh < timer.minRefresh then
+		if not timer.minRefresh or timer.minRefresh > settings.refresh then
 			timer.minRefresh = settings.refresh
 		end
 	else
@@ -1258,6 +1258,7 @@ function GridStatusAuras:ResetDurationStatuses()
 	for status in pairs(durationAuras) do
 		self:DeleteDurationStatus(status)
 	end
+	timer.minRefresh = nil
 end
 
 function GridStatusAuras:HasActiveDurations()
@@ -1269,24 +1270,19 @@ function GridStatusAuras:HasActiveDurations()
 	return false
 end
 
-function GridStatusAuras:ResetDurationTimer(hasActiveDurations)
-	if hasActiveDurations then
-		if timer.handle and timer.refresh and timer.minRefresh ~= timer.refresh then
-			self:Debug("ResetDurationTimer: cancel timer", timer.minRefresh, timer.refresh)
-			self:CancelTimer(timer.handle, true)
-		end
-		timer.refresh = timer.minRefresh
-		if not timer.handle then
-			self:Debug("ResetDurationTimer: set timer", timer.refresh)
-			timer.handle = self:ScheduleRepeatingTimer("RefreshActiveDurations", timer.refresh)
+function GridStatusAuras:UpdateDurationTimer()
+	if self:HasActiveDurations() then
+		if not timer.handle or (timer.refresh and timer.refresh ~= timer.minRefresh) then
+			timer.refresh = timer.minRefresh
+			timer.handle = self:StartTimer("RefreshActiveDurations", timer.refresh)
 		end
 	else
-		if timer.handle then
-			self:Debug("ResetDurationTimer: cancel timer")
-			self:CancelTimer(timer.handle, true)
-		end
-		timer.handle = nil
+		timer.minRefresh = nil
 		timer.refresh = nil
+		if timer.handle then
+			self:StopTimer("RefreshActiveDurations")
+			timer.handle = nil
+		end
 	end
 end
 
@@ -1675,12 +1671,7 @@ function GridStatusAuras:ScanUnitAuras(event, unit, guid)
 
 	now = GetTime()
 
-	for status, auras in pairs(durationAuras) do
-		if auras[guid] then
-			remTable(auras[guid])
-			auras[guid] = nil
-		end
-	end
+	self:ResetDurationStatuses()
 
 	if UnitIsVisible(unit) then
 		for i = 1, 40 do
@@ -1775,5 +1766,5 @@ function GridStatusAuras:ScanUnitAuras(event, unit, guid)
 		self:UnitLostBossDebuff(guid, class)
 	end
 ]]
-	self:ResetDurationTimer(self:HasActiveDurations())
+	self:UpdateDurationTimer()
 end
