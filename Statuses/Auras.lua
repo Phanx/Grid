@@ -1180,48 +1180,25 @@ local now = GetTime()
 
 local ICON_TEX_COORDS = { left = 0.06, right = 0.94, top = 0.06, bottom = 0.94 }
 
--- Simple resource pool implemented as a singly-linked list.
-local Pool = {
-	pool = nil,
-	new = function(self, obj) -- create new Pool object
-		obj = obj or {}
-		setmetatable(obj, self)
-		self.__index = self
-		return obj
-	end,
-	get = function(self) -- get a cleaned item from the pool
-		if not self.pool then self.pool = { nextPoolItem = self.pool } end
-		local item = self.pool
-		self.pool = self.pool.nextPoolItem
-		item.nextPoolItem = nil
-		if self.clean then
-			self:clean(item)
-		end
-		return item
-	end,
-	put = function(self, item) -- put an item back into the pool; caller shall remove references to item
-		item.nextPoolItem = self.pool
-		self.pool = item
-	end,
-	clean = nil, -- called in Pool:new() to return a "cleaned" pool item
-	empty = function(self) -- empty the pool
-		while self.pool do
-			local l = self.pool
-			self.pool = self.pool.nextPoolItem
-			l = nil
-		end
-	end,
-}
+-- Simple table pool.
+local newTable, remTable
+do
+	local pool = {}
 
--- durationAuraPool is a Pool of tables used by durationAuras[status][guid]
-local durationAuraPool = Pool:new(
-	{
-		clean = function(self, item)
-			item.duration = nil
-			item.expirationTime = nil
+	function newTable()
+		local t = next(pool)
+		if t then
+			pool[t] = nil
+			return t
 		end
-	}
-)
+		return {}
+	end
+
+	function remTable(t)
+		pool[wipe(t)] = true
+		return nil
+	end
+end
 
 function GridStatusAuras:UnitGainedDurationStatus(status, guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
 	local timer = self.durationTimer
@@ -1230,10 +1207,10 @@ function GridStatusAuras:UnitGainedDurationStatus(status, guid, class, name, ran
 
 	if settings.enable and (settings.statusText == "duration" or settings.statusColor == "duration") then
 		if not self.durationAuras[status] then
-			self.durationAuras[status] = {}
+			self.durationAuras[status] = newTable()
 		end
 		if not self.durationAuras[status][guid] then
-			self.durationAuras[status][guid] = durationAuraPool:get()
+			self.durationAuras[status][guid] = newTable()
 		end
 		self.durationAuras[status][guid] = {
 			class = class,
@@ -1257,7 +1234,7 @@ end
 function GridStatusAuras:UnitLostDurationStatus(status, guid, class, name)
 	local auras = self.durationAuras[status]
 	if auras and auras[guid] then
-		durationAuraPool:put(auras[guid])
+		remTable(auras[guid])
 		auras[guid] = nil
 	end
 end
@@ -1266,9 +1243,10 @@ function GridStatusAuras:DeleteDurationStatus(status)
 	local auras = self.durationAuras[status]
 	if not auras then return end
 	for guid in pairs(auras) do
-		durationAuraPool:put(auras[guid])
+		remTable(auras[guid])
 		auras[guid] = nil
 	end
+	remTable(auras)
 	self.durationAuras[status] = nil
 end
 
@@ -1276,12 +1254,11 @@ function GridStatusAuras:ResetDurationStatuses()
 	for status in pairs(self.durationAuras) do
 		self:DeleteDurationStatus(status)
 	end
-	durationAuraPool:empty()
 end
 
 function GridStatusAuras:HasActiveDurations()
 	for status, auras in pairs(self.durationAuras) do
-		for guid in pairs(auras) do
+		if next(auras) then
 			return true
 		end
 	end
@@ -1693,7 +1670,7 @@ function GridStatusAuras:ScanUnitAuras(event, unit, guid)
 
 	for status, auras in pairs(self.durationAuras) do
 		if auras[guid] then
-			durationAuraPool:put(auras[guid])
+			remTable(auras[guid])
 			auras[guid] = nil
 		end
 	end
