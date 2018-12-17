@@ -1332,6 +1332,7 @@ function GridStatusAuras:RefreshActiveDurations()
 
 	--self:Debug("RefreshActiveDurations", now)
 
+	local refresh
 	for status, guids in pairs(durationAuras) do
 		local settings = self.db.profile[status]
 		if settings and settings.enable and not settings.missing then -- and settings[class] ~= false then -- ##DELETE
@@ -1360,8 +1361,14 @@ function GridStatusAuras:RefreshActiveDurations()
 				--	self.core:SendStatusLost(guid, status)
 				end
 			end
+			-- Set refresh to the minimum refresh setting across active duration auras.
+			if not refresh or refresh > settings.refresh then
+				refresh = settings.refresh
+			end
 		end
 	end
+	timer.minRefresh = refresh
+	self:UpdateDurationTimer()
 end
 
 function GridStatusAuras:UnitGainedBuff(guid, class, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable)
@@ -1671,7 +1678,13 @@ function GridStatusAuras:ScanUnitAuras(event, unit, guid)
 
 	now = GetTime()
 
-	self:ResetDurationStatuses()
+	-- Only remove duration auras that are on the GUID.
+	for _, auras in pairs(durationAuras) do
+		if auras[guid] then
+			remTable(auras[guid])
+			auras[guid] = nil
+		end
+	end
 
 	if UnitIsVisible(unit) then
 		for i = 1, 40 do
