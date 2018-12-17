@@ -1274,7 +1274,7 @@ function GridStatusAuras:UpdateDurationTimer()
 	if self:HasActiveDurations() then
 		if not timer.handle or (timer.refresh and timer.refresh ~= timer.minRefresh) then
 			timer.refresh = timer.minRefresh
-			timer.handle = self:StartTimer("RefreshActiveDurations", timer.refresh)
+			timer.handle = self:StartTimer("RefreshActiveDurations", timer.refresh, true)
 		end
 	else
 		timer.minRefresh = nil
