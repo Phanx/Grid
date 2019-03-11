@@ -1131,6 +1131,11 @@ function GridStatusAuras:UpdateDispellable()
 		-- 115276   Sear Magic (Fel Imp)
 		--  89808   Singe Magic (Imp)
 		PlayerCanDispel.Magic   = IsPlayerSpell(115276, true) or IsPlayerSpell(89808, true)
+
+	elseif PLAYER_CLASS == "MAGE" then
+		-- 475   Remove Curse       Fire, Arcane, Frost        Curse
+		PlayerCanDispel.Curse   = IsPlayerSpell(475, true)
+	
 	end
 end
 
