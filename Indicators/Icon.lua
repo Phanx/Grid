@@ -22,9 +22,10 @@ local BACKDROP = {
 GridFrame:RegisterIndicator("icon", L["Center Icon"],
 	-- New
 	function(frame)
-		local icon = CreateFrame("Frame", nil, frame)
+		local icon = CreateFrame("Frame", nil, frame, "BackdropTemplate")
 		icon:SetPoint("CENTER")
-		icon:SetBackdrop(BACKDROP)
+		icon.backdropInfo = BACKDROP
+		icon:ApplyBackdrop()
 
 		local texture = icon:CreateTexture(nil, "ARTWORK")
 		texture:SetPoint("BOTTOMLEFT", 2, 2)
@@ -75,7 +76,8 @@ GridFrame:RegisterIndicator("icon", L["Center Icon"],
 		BACKDROP.insets.top = iconBorderSize
 		BACKDROP.insets.bottom = iconBorderSize
 
-		self:SetBackdrop(BACKDROP)
+		self.backdropInfo = BACKDROP
+		self:ApplyBackdrop()
 		self:SetBackdropBorderColor(r, g, b, a)
 
 		self.texture:SetPoint("BOTTOMLEFT", iconBorderSize, iconBorderSize)

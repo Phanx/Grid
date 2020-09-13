@@ -28,8 +28,9 @@ local anchor = {
 }
 
 local function New(frame)
-	local square = CreateFrame("Frame", nil, frame)
-	square:SetBackdrop(BACKDROP)
+	local square = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+	square.backdropInfo = BACKDROP
+	square:ApplyBackdrop()
 	square:SetBackdropBorderColor(0, 0, 0, 1)
 	return square
 end

@@ -839,14 +839,15 @@ function GridLayout:CreateFrames()
 	f:SetScript("OnHide", GridLayout_OnMouseUp)
 
 	-- create backdrop
-	f.backdrop = CreateFrame("Frame", "$parentBackdrop", f)
+	f.backdrop = CreateFrame("Frame", "$parentBackdrop", f, "BackdropTemplate")
 	f.backdrop:SetPoint("BOTTOMLEFT", -4, -4)
 	f.backdrop:SetPoint("TOPRIGHT", 4, 4)
-	f.backdrop:SetBackdrop({
+	f.backdrop.backdropInfo = {
 		bgFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = false, tileSize = 16,
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16,
 		insets = {left = 4, right = 4, top = 4, bottom = 4},
-	})
+	}
+	f.backdrop:ApplyBackdrop()
 
 	f:SetFrameLevel(f.backdrop:GetFrameLevel() + 2)
 
@@ -1206,7 +1207,8 @@ function GridLayout:UpdateColor()
 	backdrop.insets.right = settings.borderInset
 	backdrop.insets.top =  settings.borderInset
 	backdrop.insets.bottom = settings.borderInset
-	self.frame.backdrop:SetBackdrop(backdrop)
+	self.frame.backdrop.backdropInfo = backdrop
+	self.frame.backdrop:ApplyBackdrop()
 
 	self.frame.backdrop:SetBackdropBorderColor(settings.borderColor.r, settings.borderColor.g, settings.borderColor.b, settings.borderColor.a)
 	self.frame.backdrop:SetBackdropColor(settings.backgroundColor.r, settings.backgroundColor.g, settings.backgroundColor.b, settings.backgroundColor.a)

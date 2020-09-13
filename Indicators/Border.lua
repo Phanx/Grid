@@ -22,7 +22,8 @@ local BACKDROP = {
 GridFrame:RegisterIndicator("border", L["Border"],
 	-- New
 	function(frame)
-		frame:SetBackdrop(BACKDROP)
+		frame.backdropInfo = BACKDROP
+		frame:ApplyBackdrop()
 		return {}
 	end,
 
@@ -40,7 +41,8 @@ GridFrame:RegisterIndicator("border", L["Border"],
 		BACKDROP.insets.top = size
 		BACKDROP.insets.bottom = size
 
-		frame:SetBackdrop(BACKDROP)
+		frame.backdropInfo = BACKDROP
+		frame:ApplyBackdrop()
 		frame:SetBackdropColor(0, 0, 0, 1)
 		frame:SetBackdropBorderColor(r, g, b, a)
 	end,
